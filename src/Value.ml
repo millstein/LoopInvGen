@@ -32,7 +32,7 @@ let rec to_string : t -> string = function
   | Bool b   -> Bool.to_string b
   | Char c   -> "\'" ^ (Char.to_string c) ^ "\'"
   | String s -> "\"" ^ s ^ "\""
-  | Real r   -> Float.(if r < 0. then "(" ^ (to_string r) ^ ")" else to_string r)
+  | Real r   -> Float.to_string r
   | List _   -> raise (Internal_Exn "List type (de/)serialization not implemented!")
   | Array (key_type, val_type, value, default_v)
     -> let default_string = "((as const (Array " ^ (Type.to_string key_type) ^ " " ^ (Type.to_string val_type) ^ ")) " ^ (to_string default_v) ^ ")"
