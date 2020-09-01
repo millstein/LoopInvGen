@@ -112,18 +112,6 @@ let conditionals = [
     to_string = (fun [@warning "-8"] [a ; b] -> "(<= " ^ a ^ " " ^ b ^ ")");
     global_constraints = (fun _ -> [])
   } ;
-  {
-    name = "real-ite";
-    codomain = Type.REAL;
-    domain = Type.[BOOL; REAL; REAL];
-    is_argument_valid = (function
-                 | [x ; y ; z] -> (not (is_constant x)) && (y =/= z)
-                 | _ -> false);
-    evaluate = Value.(fun [@warning "-8"] [Bool x ; v1 ; v2]
-                      -> Real (if x then (value_of v1) else (value_of v2)));
-    to_string = (fun [@warning "-8"] [a ; b ; c] -> "IF(" ^ a ^ "," ^ b ^ "," ^ c ^ ")");
-    global_constraints = (fun _ -> [])
-  }
 ]
 
 
