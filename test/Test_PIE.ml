@@ -88,29 +88,6 @@ let abs_zero_initial_features () =
   ]
   (List.map [(-1.4) ; 3.5 ; 0. ; (-2.6) ; 6.0] ~f:(fun i -> [Value.Real i]))
 
- let real_abs_conflict_failure () =
-  let (res, _) = learnPreCond real_abs_job ~config:{ PIE.Config.default with
-                                                disable_synth = true }
-  in Alcotest.(check string) "identical" "false" (cnf_opt_to_desc res)
-
- let real_abs_conflict_group () =
-  let res = List.to_string_map (conflictingTests real_abs_job)
-                               ~sep:"\n" ~f:conflicts_to_string
-  in Alcotest.(check string) "identical" "Pos:{[0.]} + Neg:{[-2.6] ; [-1.4]}" res
-
- let real_abs_precond_1_cnf () =
-  let (res, _) = learnPreCond (Job.add_feature ~job:real_abs_job
-                                 ((fun [@warning "-8"] [Value.Real x] -> Float.(equal (x +. x) x)),
-                                 "(= x (+ x x))"))
-                              ~config:{ PIE.Config.default with
-                                        _BFL = {
-                                          BFL.Config.default with
-                                          min_clauses = 1
-                                        ; auto_increment_clauses = false
-                                        }
-                                      ; disable_synth = true
-                                      }
-  in Alcotest.(check string) "identical" "false" (cnf_opt_to_desc res)
 
  let real_abs_precond_auto_1 () =
   let (res, _) = learnPreCond (Job.add_feature ~job:real_abs_job
@@ -146,9 +123,6 @@ let all = [
   "Abs Precond 1-CNF",            `Quick, abs_precond_1_cnf ;
   "Abs Precond Auto >= 1",        `Quick, abs_precond_auto_1 ;
   "Abs No Initial Features",      `Quick, abs_zero_initial_features ;
-  "Real Abs Conflict Failure",    `Quick, real_abs_conflict_failure  ;
-  "Real Abs Conflict Group",      `Quick, real_abs_conflict_group    ;
-  "Real Abs Precond 1-CNF",       `Quick, real_abs_precond_1_cnf ;
   "Real Abs Precond Auto >= 1",   `Quick, real_abs_precond_auto_1 ;
   "Real Abs No Initial Features", `Quick, real_abs_zero_initial_features ;
 ]
