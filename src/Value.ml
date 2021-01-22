@@ -49,6 +49,8 @@ let of_atomic_string (s : string) : t =
                                     (chop_prefix_exn ~prefix:"\'" s))))
   with Invalid_argument _ -> try
     String String.(chop_suffix_exn ~suffix:"\"" (chop_prefix_exn ~prefix:"\"" s))
+  with Invalid_argument _ -> try
+    Real (Float.of_string s)
   with Invalid_argument _ ->
     raise (Parse_Exn ("Failed to parse value `" ^ s ^ "`."))
 
@@ -85,6 +87,11 @@ and of_sexp (sexp : Sexp.t) : t =
   match sexp with
       | Atom v -> (of_atomic_string v)
       | List([(Atom "-") ; (Atom v)]) -> (of_atomic_string ("-" ^ v))
+      | List([(Atom "-") ; s]) -> begin match (of_sexp s) with
+                                  | Real r -> Real (-1.0 *. r)
+                                  | _ -> raise (Internal_Exn ("Real type not passed: "
+                                ^ (to_string_hum sexp))) end
+      | List([(Atom "/") ; (Atom num) ; (Atom denom)]) -> Real ((Float.of_string num) /. (Float.of_string denom))
       | List([List([ Atom "as"; Atom "const"; _ ]); _]) | List([Atom "store";_;_;_]) ->
                                       (let key_type, val_type, arr,def_val = (parse_array [] sexp) in
                                                 Array ((key_type) , (val_type) ,arr, def_val))
