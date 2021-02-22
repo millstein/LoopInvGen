@@ -1,7 +1,7 @@
 open Base
-
 open Expr
 open Utils
+
 
 
 let translation = [
@@ -142,7 +142,6 @@ let conditionals = [
   } 
 
 ]
-
 
 
 let levels = [| translation ; conditionals ; linear |]
